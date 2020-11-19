@@ -15,5 +15,4 @@ RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install aws-sam-cli
 
 COPY entrypoint.sh /entrypoint.sh
-COPY post_comment.sh /post_comment.sh
 ENTRYPOINT ["/entrypoint.sh"]

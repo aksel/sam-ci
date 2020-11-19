@@ -11,5 +11,25 @@ fi
 output=$(sam "${INPUT_SAM_COMMAND}")
 
 if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${INPUT_ACTIONS_COMMENT}" == "true" ]; then
-  ./post_comment.sh "$output"
+  comment="#### \`sam ${INPUT_SAM_COMMAND}\`
+<details><summary>Show Output</summary>
+
+\`\`\`
+${output}
+\`\`\`
+
+</details>
+
+*Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`*"
+
+  payload=$(jq -R --slurp '{body: .}' <<<"${comment}")
+  comments_url=$(jq -r .pull_request.comments_url <<<"${GITHUB_EVENT_PATH}")
+
+  # Post comment to PR
+  echo curl "${comments_url}" \
+    -s \
+    -S \
+    -H "Authorization: token ${GITHUB_TOKEN}" \
+    -H "Content-Type: application/json" \
+    --data "${payload}" >/dev/null
 fi
