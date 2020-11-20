@@ -26,10 +26,10 @@ ${output}
   comments_url=$(jq -r .pull_request.comments_url <<<"${GITHUB_EVENT_PATH}")
 
   # Post comment to PR
-  echo curl "${comments_url}" \
+  curl "${comments_url}" \
     -s \
     -S \
     -H "Authorization: token ${GITHUB_TOKEN}" \
     -H "Content-Type: application/json" \
-    --data "${payload}" >/dev/null
+    --data "${payload}"
 fi
